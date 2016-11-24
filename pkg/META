@@ -1,0 +1,29 @@
+description = "LRU/2Q cache"
+version = "%%VERSION_NUM%%"
+requires = "result"
+archive(byte) = "anycache.cma"
+archive(native) = "anycache.cmxa"
+plugin(byte) = "anycache.cma"
+plugin(native) = "anycache.cmxs"
+
+package "lwt" (
+  description = "Lwt support for Anycache"
+  version = "%%VERSION_NUM%%"
+  requires = "anycache lwt"
+  archive(byte) = "anycache_lwt.cma"
+  archive(native) = "anycache_lwt.cmxa"
+  plugin(byte) = "anycache_lwt.cma"
+  plugin(native) = "anycache_lwt.cmxs"
+  exists_if  = "anycache_lwt.cma"
+)
+
+package "async" (
+  description = "Async support for Anycache"
+  version = "%%VERSION_NUM%%"
+  requires = "anycache async"
+  archive(byte) = "anycache_async.cma"
+  archive(native) = "anycache_async.cmxa"
+  plugin(byte) = "anycache_async.cma"
+  plugin(native) = "anycache_async.cmxs"
+  exists_if = "anycache_async.cma"
+)

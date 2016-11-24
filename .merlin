@@ -1,0 +1,5 @@
+PKG alcotest result lwt async core
+FLG -safe-string -short-paths -strict-sequence -w A-44 -warn-error SU
+S src
+S test
+B _build/**

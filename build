@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+topkg lint
+topkg doc
+topkg build -- --coverage true
+rm -f bisect*.out
+topkg test
+bisect-ppx-report -I _build/ -summary-only -text - bisect*.out
+bisect-ppx-report -I _build/ -html _build/coverage/ bisect*.out

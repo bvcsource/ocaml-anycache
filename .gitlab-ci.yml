@@ -1,0 +1,71 @@
+cache:
+    key: "$CI_BUILD_NAME"
+    paths:
+        - _opam
+
+test:lint:
+    image: edwintorok/topkg-care-container
+    script:
+        - topkg lint
+
+.job_template: &job_definition
+    before_script:
+        # restore cache (gitlab can only cache files under current dir)
+        - test -d _opam && mv _opam ~/.opam
+        # install all dependencies for current project
+        - opam pin add -n $CI_PROJECT_NAME .
+        - opam depext $CI_PROJECT_NAME
+        - opam install --deps-only -t $CI_PROJECT_NAME
+        - echo "$EXTRA_DEPS"; test -n "$EXTRA_DEPS" && opam depext -i $EXTRA_DEPS
+        # make cachable
+        - cp -a ~/.opam _opam
+    script:
+        - opam install $CI_PROJECT_NAME
+        - opam remove $CI_PROJECT_NAME
+        - opam install -t $CI_PROJECT_NAME
+
+
+test:4.01.0:
+    variables:
+      EXTRA_DEPS: async
+    <<: *job_definition
+    image: ocaml/opam:debian-8_ocaml-4.01.0
+
+test:4.02.3:
+    variables:
+      EXTRA_DEPS: bisect_ppx lwt async
+    <<: *job_definition
+    image: ocaml/opam:fedora-24_ocaml-4.02.3
+    script:
+        - BISECT_COVERAGE=true ocaml pkg/pkg.ml build --tests true --pinned true
+        - ocaml pkg/pkg.ml test
+        - bisect-ppx-report -I _build/ -summary-only -text - bisect*.out
+        - bisect-ppx-report -I _build/ -html coverage/ bisect*.out -verbose
+    artifacts:
+        paths:
+            - coverage
+
+test:4.03.0:
+    <<: *job_definition
+    image: ocaml/opam:centos-7_ocaml-4.03.0
+
+test:4.04.0:
+    variables:
+      EXTRA_DEPS: lwt
+    <<: *job_definition
+    image: ocaml/opam:alpine-3.3_ocaml-4.04.0
+
+pages:
+    variables:
+      EXTRA_DEPS: lwt async
+    <<: *job_definition
+    image: edwintorok/topkg-care-container
+    script:
+        - topkg build --tests false -- --pinned true
+        - topkg doc
+        - mkdir public && mv _build/doc/api.docdir public/doc
+    artifacts:
+        paths:
+            - public
+    only:
+        - master

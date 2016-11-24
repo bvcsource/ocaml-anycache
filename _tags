@@ -1,0 +1,14 @@
+".git": -traverse, not_hygienic
+"_opam": -traverse, not_hygienic
+
+true : bin_annot, principal, safe_string, short_paths, strict_sequence, warn(A-41-44), warn_error(SU), package(result)
+
+<src> : include
+<src/*lwt*>: package(lwt)
+<src/*async*>: package(async), thread
+<test>: include
+<test/**>: package(alcotest), thread
+<test/lwt/*>: package(lwt.unix)
+<test/async/*>: package(async)
+<test/test.*>: package(alcotest)
+
