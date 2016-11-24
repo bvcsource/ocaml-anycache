@@ -21,16 +21,16 @@ depopts: [
     "async"
 ]
 build: [ "ocaml" "pkg/pkg.ml" "build"
-       "--pinned" pinned
-       "--with-lwt" lwt:installed
-       "--with-async" async:installed
+       "--pinned" "%{pinned}%"
+       "--with-lwt" "%{lwt:installed}%"
+       "--with-async" "%{async:installed}%"
        "--tests" "false"
        ]
 build-test: [
   ["ocaml" "pkg/pkg.ml" "build"
-       "--pinned" pinned
-       "--with-lwt" lwt:installed
-       "--with-async" async:installed
+       "--pinned" "%{pinned}%"
+       "--with-lwt" "%{lwt:installed}%"
+       "--with-async" "%{async:installed}%"
        "--tests" "true"
   ]
   ["ocaml" "pkg/pkg.ml" "test"]]
